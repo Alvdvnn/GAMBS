@@ -1,0 +1,30 @@
+"""Central constants, color palette, and tunable parameters for GAMBS."""
+
+from pathlib import Path
+
+# --- Economy ---
+STARTING_BALANCE: float = 1000.0
+HOUSE_EDGE: float = 0.03
+
+# --- VIP (used in later plans, defined here for the save model) ---
+VIP_XP_PER_LEVEL: int = 500
+MAX_VIP_LEVEL: int = 10
+
+# --- Crash game tunables ---
+CRASH_GROWTH_RATE: float = 0.15  # k in multiplier = e^(k * elapsed_seconds)
+CRASH_TICK_SECONDS: float = 0.08  # animation frame interval
+
+# --- Paths ---
+DATA_DIR: Path = Path(__file__).resolve().parent / "data"
+SAVE_PATH: Path = DATA_DIR / "save.json"
+
+# --- Color palette (hex, consumed by rich styles) ---
+COLORS: dict[str, str] = {
+    "bg": "#0a0a0f",
+    "gold": "#ffd700",
+    "gamble": "#ff6600",
+    "earn": "#ff00ff",
+    "success": "#00ff41",
+    "danger": "#ff4444",
+    "info": "#00ffff",
+}
