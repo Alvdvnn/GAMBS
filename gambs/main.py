@@ -79,8 +79,20 @@ def _coming_soon(console: Console, name: str) -> None:
     readchar.readkey()
 
 
+def _make_console() -> Console:
+    """Build the console, forcing UTF-8 so emoji/box glyphs don't crash on
+    legacy Windows code pages (cp1252)."""
+    try:
+        import sys
+
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except (AttributeError, ValueError):
+        pass  # older stream without reconfigure; rich still degrades gracefully
+    return Console()
+
+
 def main() -> None:
-    console = Console()
+    console = _make_console()
     save = load_save(config.SAVE_PATH)
     _play_splash(console)
 
@@ -98,11 +110,10 @@ def main() -> None:
             break
         elif route == "gamble":
             _run_crash(console, save)  # Plan 2 adds a game selector here
+            write_save(config.SAVE_PATH, save)  # persist only after a state change
         elif route in ("earn", "shop", "vip", "stats"):
             _coming_soon(console, route.upper())
-        # unknown key: loop again
-
-        write_save(config.SAVE_PATH, save)
+        # unknown key: loop again (no disk write)
 
 
 if __name__ == "__main__":
