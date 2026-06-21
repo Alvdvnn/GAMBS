@@ -45,3 +45,29 @@ def test_payout_multiplies_bet_by_multiplier():
 
 def test_payout_rounds_to_cents():
     assert payout(33.33, 1.5) == 50.0
+
+
+from gambs.games.crash import resolve_round, CrashResult
+
+
+def test_cashout_before_crash_wins():
+    result = resolve_round(bet=100.0, crash_point=5.0, cashout_multiplier=2.0)
+    assert isinstance(result, CrashResult)
+    assert result.won is True
+    assert result.cashout_multiplier == 2.0
+    assert result.winnings == 200.0
+    assert result.net == 100.0  # winnings minus the bet
+
+
+def test_never_cashed_out_loses_bet():
+    result = resolve_round(bet=100.0, crash_point=3.2, cashout_multiplier=None)
+    assert result.won is False
+    assert result.winnings == 0.0
+    assert result.net == -100.0
+
+
+def test_cashout_at_or_after_crash_loses():
+    # Asking to cash out at 5.0 when it crashed at 3.0 is too late.
+    result = resolve_round(bet=50.0, crash_point=3.0, cashout_multiplier=5.0)
+    assert result.won is False
+    assert result.net == -50.0

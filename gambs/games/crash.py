@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import random
+from dataclasses import dataclass
 
 from gambs import config
 
@@ -31,3 +32,31 @@ def multiplier_at(elapsed: float, growth: float = config.CRASH_GROWTH_RATE) -> f
 def payout(bet: float, cashout_multiplier: float) -> float:
     """Winnings returned when cashing out at a given multiplier."""
     return math.floor(bet * cashout_multiplier * 100 + 0.5) / 100
+
+
+@dataclass
+class CrashResult:
+    won: bool
+    cashout_multiplier: float | None
+    winnings: float
+    net: float
+
+
+def resolve_round(
+    bet: float, crash_point: float, cashout_multiplier: float | None
+) -> CrashResult:
+    """Decide the outcome of a crash round.
+
+    The player wins only if they cashed out strictly before the crash point.
+    """
+    if cashout_multiplier is not None and cashout_multiplier < crash_point:
+        winnings = payout(bet, cashout_multiplier)
+        return CrashResult(
+            won=True,
+            cashout_multiplier=cashout_multiplier,
+            winnings=winnings,
+            net=round(winnings - bet, 2),
+        )
+    return CrashResult(
+        won=False, cashout_multiplier=None, winnings=0.0, net=round(-bet, 2)
+    )
