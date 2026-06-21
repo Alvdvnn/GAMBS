@@ -21,3 +21,13 @@ def generate_crash_point(
         r = 0.0
     raw = (1.0 - house_edge) / (1.0 - r)
     return max(1.0, math.floor(raw * 100) / 100)
+
+
+def multiplier_at(elapsed: float, growth: float = config.CRASH_GROWTH_RATE) -> float:
+    """Current multiplier after `elapsed` seconds: e^(growth * elapsed)."""
+    return round(math.exp(growth * elapsed), 2)
+
+
+def payout(bet: float, cashout_multiplier: float) -> float:
+    """Winnings returned when cashing out at a given multiplier."""
+    return math.floor(bet * cashout_multiplier * 100 + 0.5) / 100
