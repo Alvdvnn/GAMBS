@@ -19,18 +19,12 @@ def test_registry_entries_are_callable():
 
 
 def test_resolve_game_key_maps_digits_to_entries():
-    import pytest
-    if len(all_games()) < 5:
-        pytest.skip("remaining games added in Tasks 3-6")
     games = all_games()
     assert resolve_game_key("1", games) is games[0]
     assert resolve_game_key("2", games) is games[1]
 
 
 def test_resolve_game_key_out_of_range_is_none():
-    import pytest
-    if len(all_games()) < 5:
-        pytest.skip("remaining games added in Tasks 3-6")
     games = all_games()
     assert resolve_game_key("0", games) is None
     assert resolve_game_key("9", games) is None
