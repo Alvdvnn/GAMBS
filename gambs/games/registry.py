@@ -28,9 +28,11 @@ def all_games() -> list[GameEntry]:
     from gambs.games.crash_screen import run_crash
     from gambs.games.coinflip_screen import run_coinflip
     from gambs.games.dice_screen import run_dice
+    from gambs.games.slots_screen import run_slots
 
     return [
         GameEntry("crash", "🚀 Crash", run_crash),
         GameEntry("coinflip", "🪙 Coin Flip", run_coinflip),
         GameEntry("dice", "🎲 Dice", run_dice),
+        GameEntry("slots", "🎰 Slots", run_slots),
     ]
