@@ -17,6 +17,7 @@ from gambs.save import SaveData, load_save, write_save
 from gambs.ui import splash
 from gambs.ui.components import balance_bar_text
 from gambs.ui.menu import menu_panel, resolve_route
+from gambs.ui.prompts import bet_prompt
 from gambs.ui.tutorial import should_show_tutorial, mark_tutorial_seen, tutorial_panel
 
 CRASH_TUTORIAL = [
@@ -40,23 +41,6 @@ def _play_splash(console: Console) -> None:
     readchar.readkey()
 
 
-def _bet_prompt(console: Console, save: SaveData) -> float | None:
-    """Ask for a bet; return a valid amount or None to cancel."""
-    console.print(f"Balance: ${save.balance:,.2f}. Enter bet (blank to cancel): ", end="")
-    raw = input().strip()
-    if not raw:
-        return None
-    try:
-        bet = float(raw)
-    except ValueError:
-        console.print(Text("Invalid amount.", style=config.COLORS["danger"]))
-        return None
-    if bet <= 0 or bet > save.balance:
-        console.print(Text("Bet must be positive and within your balance.", style=config.COLORS["danger"]))
-        return None
-    return round(bet, 2)
-
-
 def _run_crash(console: Console, save: SaveData) -> None:
     if should_show_tutorial(save, "crash"):
         console.clear()
@@ -64,7 +48,7 @@ def _run_crash(console: Console, save: SaveData) -> None:
         choice = readchar.readkey().lower()
         if choice == "d":
             mark_tutorial_seen(save, "crash")
-    bet = _bet_prompt(console, save)
+    bet = bet_prompt(console, save)
     if bet is None:
         return
     play_crash(console, save, bet)
