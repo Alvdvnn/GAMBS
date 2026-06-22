@@ -27,8 +27,10 @@ def all_games() -> list[GameEntry]:
     """Return every registered game, in display order."""
     from gambs.games.crash_screen import run_crash
     from gambs.games.coinflip_screen import run_coinflip
+    from gambs.games.dice_screen import run_dice
 
     return [
         GameEntry("crash", "🚀 Crash", run_crash),
         GameEntry("coinflip", "🪙 Coin Flip", run_coinflip),
+        GameEntry("dice", "🎲 Dice", run_dice),
     ]
