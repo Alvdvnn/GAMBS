@@ -1,0 +1,32 @@
+"""The single registry of playable gamble games.
+
+Screen modules are imported lazily inside `all_games()` so importing the
+registry never triggers heavy/interactive imports at module load.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Callable
+
+from rich.console import Console
+
+from gambs.save import SaveData
+
+RunFn = Callable[[Console, SaveData], None]
+
+
+@dataclass
+class GameEntry:
+    id: str
+    label: str
+    run: RunFn
+
+
+def all_games() -> list[GameEntry]:
+    """Return every registered game, in display order."""
+    from gambs.games.crash_screen import run_crash
+
+    return [
+        GameEntry("crash", "🚀 Crash", run_crash),
+    ]

@@ -15,6 +15,7 @@ from gambs import config
 from gambs.games import crash
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
+from gambs.ui.prompts import bet_prompt, tutorial_gate, pause
 
 
 def _read_key_nonblocking() -> str | None:
@@ -92,3 +93,21 @@ def play_crash(console: Console, save: SaveData, bet: float) -> crash.CrashResul
     console.print(Panel(Align.center(msg), style=config.COLORS["gold"]))
     console.print(balance_bar_text(save))
     return result
+
+
+CRASH_TUTORIAL = [
+    "Enter a bet amount.",
+    "Watch the multiplier rise from 1.00x.",
+    "Press [C] to cash out before the rocket crashes.",
+    "If it crashes first, you lose your bet.",
+]
+
+
+def run_crash(console: Console, save: SaveData) -> None:
+    """Full Crash round flow: tutorial gate -> bet -> play -> pause."""
+    tutorial_gate(console, save, "crash", "CRASH", CRASH_TUTORIAL)
+    bet = bet_prompt(console, save)
+    if bet is None:
+        return
+    play_crash(console, save, bet)
+    pause(console)

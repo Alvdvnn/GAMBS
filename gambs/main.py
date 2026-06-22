@@ -12,20 +12,11 @@ from rich.panel import Panel
 from rich.text import Text
 
 from gambs import config
-from gambs.games.crash_screen import play_crash
 from gambs.save import SaveData, load_save, write_save
 from gambs.ui import splash
 from gambs.ui.components import balance_bar_text
+from gambs.ui.game_select import run_game_select
 from gambs.ui.menu import menu_panel, resolve_route
-from gambs.ui.prompts import bet_prompt
-from gambs.ui.tutorial import should_show_tutorial, mark_tutorial_seen, tutorial_panel
-
-CRASH_TUTORIAL = [
-    "Enter a bet amount.",
-    "Watch the multiplier rise from 1.00x.",
-    "Press [C] to cash out before the rocket crashes.",
-    "If it crashes first, you lose your bet.",
-]
 
 
 def _play_splash(console: Console) -> None:
@@ -38,21 +29,6 @@ def _play_splash(console: Console) -> None:
         console.print(Align.center(Text("[ Terminal Game Station ]", style=config.COLORS["gold"])))
         time.sleep(0.35)
     console.print(Align.center(Text("Press any key to start...", style="dim")))
-    readchar.readkey()
-
-
-def _run_crash(console: Console, save: SaveData) -> None:
-    if should_show_tutorial(save, "crash"):
-        console.clear()
-        console.print(tutorial_panel("CRASH", CRASH_TUTORIAL))
-        choice = readchar.readkey().lower()
-        if choice == "d":
-            mark_tutorial_seen(save, "crash")
-    bet = bet_prompt(console, save)
-    if bet is None:
-        return
-    play_crash(console, save, bet)
-    console.print(Text("Press any key to return to menu...", style="dim"))
     readchar.readkey()
 
 
@@ -93,8 +69,8 @@ def main() -> None:
             console.print(Text("Saved. See you next time. ♠", style=config.COLORS["gold"]))
             break
         elif route == "gamble":
-            _run_crash(console, save)  # Plan 2 adds a game selector here
-            write_save(config.SAVE_PATH, save)  # persist only after a state change
+            run_game_select(console, save)
+            write_save(config.SAVE_PATH, save)
         elif route in ("earn", "shop", "vip", "stats"):
             _coming_soon(console, route.upper())
         # unknown key: loop again (no disk write)
