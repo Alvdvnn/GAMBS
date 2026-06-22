@@ -12,6 +12,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from gambs import config
+from gambs.earn.typing_heist_screen import run_typing_heist
 from gambs.save import SaveData, load_save, write_save
 from gambs.ui import splash
 from gambs.ui.components import balance_bar_text
@@ -71,7 +72,10 @@ def main() -> None:
         elif route == "gamble":
             run_game_select(console, save)
             write_save(config.SAVE_PATH, save)
-        elif route in ("earn", "shop", "vip", "stats"):
+        elif route == "earn":
+            run_typing_heist(console, save)
+            write_save(config.SAVE_PATH, save)
+        elif route in ("shop", "vip", "stats"):
             _coming_soon(console, route.upper())
         # unknown key: loop again (no disk write)
 

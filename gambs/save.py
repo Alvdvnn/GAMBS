@@ -25,6 +25,7 @@ class Stats:
     games_played: int = 0
     best_crash_multiplier: float = 0.0
     bounty_jobs_completed: int = 0
+    total_earned: float = 0.0
 
 
 @dataclass
