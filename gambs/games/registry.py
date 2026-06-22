@@ -32,6 +32,7 @@ def all_games() -> list[GameEntry]:
     from gambs.games.roulette_screen import run_roulette
     from gambs.games.blackjack_screen import run_blackjack
     from gambs.games.baccarat_screen import run_baccarat
+    from gambs.games.poker_screen import run_poker
 
     return [
         GameEntry("crash", "🚀 Crash", run_crash),
@@ -41,4 +42,5 @@ def all_games() -> list[GameEntry]:
         GameEntry("roulette", "🎡 Roulette", run_roulette),
         GameEntry("blackjack", "🃏 Blackjack", run_blackjack),
         GameEntry("baccarat", "🎴 Baccarat", run_baccarat),
+        GameEntry("poker", "♠ Video Poker", run_poker),
     ]
