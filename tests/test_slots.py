@@ -1,6 +1,18 @@
+import itertools
 import random
 
-from gambs.games.slots import SYMBOLS, spin, settle
+from gambs.games.slots import SYMBOLS, _WEIGHTS, spin, settle
+
+
+def test_house_edge_in_target_band():
+    """Exact EV over all 6^3 outcomes must stay in the fair-but-challenging band."""
+    total = sum(_WEIGHTS)
+    probs = {s: w / total for s, w in zip(SYMBOLS, _WEIGHTS)}
+    ev = 0.0
+    for a, b, c in itertools.product(SYMBOLS, repeat=3):
+        ev += probs[a] * probs[b] * probs[c] * settle((a, b, c), 1.0)
+    # ev is net per unit bet; house edge = -ev. Keep it within 3%-10%.
+    assert -0.10 <= ev <= -0.03
 
 
 def test_spin_returns_three_valid_symbols():

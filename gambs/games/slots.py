@@ -5,7 +5,11 @@ from __future__ import annotations
 import random
 
 SYMBOLS = ["7", "BAR", "♦", "♣", "♥", "♠"]
-_WEIGHTS = [1, 2, 4, 5, 6, 6]  # "7" is the rarest
+# Weights tuned for a ~6% house edge (test_house_edge_in_target_band locks the
+# band). "7" is the most common symbol on purpose: the two-7s payout (2x) is the
+# main source of frequent small wins, so making 7 rare pushes the edge to ~70%.
+# BAR stays slightly rarer than the suits since its triple pays 20x.
+_WEIGHTS = [9, 6, 7, 7, 7, 7]
 
 
 def spin(rng: random.Random) -> tuple[str, str, str]:
