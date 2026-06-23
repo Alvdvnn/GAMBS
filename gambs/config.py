@@ -14,6 +14,13 @@ MAX_VIP_LEVEL: int = 10
 CRASH_GROWTH_RATE: float = 0.15  # k in multiplier = e^(k * elapsed_seconds)
 CRASH_TICK_SECONDS: float = 0.08  # animation frame interval
 
+# --- Terminal Trading tunables ---
+TRADING_STOCKS: list[str] = ["LUCK", "CHIP", "DICE", "RISK"]
+TRADING_START_PRICE: float = 100.0
+TRADING_MIN_PRICE: float = 1.0
+TRADING_TICKS: int = 20          # player actions per session
+TRADING_CAPITAL: float = 1000.0  # virtual session chips, NOT real balance
+
 # --- Paths ---
 DATA_DIR: Path = Path(__file__).resolve().parent / "data"
 SAVE_PATH: Path = DATA_DIR / "save.json"
