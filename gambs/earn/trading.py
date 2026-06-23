@@ -46,3 +46,46 @@ def step_prices(
 ) -> dict[str, float]:
     """Return a new price map with every stock advanced one step."""
     return {stock: step_price(rng, price, volatility) for stock, price in prices.items()}
+
+
+@dataclass
+class Portfolio:
+    cash: float
+    holdings: dict[str, int]
+
+
+def new_portfolio(capital: float) -> Portfolio:
+    """A fresh portfolio holding `capital` cash and zero shares of each stock."""
+    return Portfolio(cash=capital, holdings={s: 0 for s in config.TRADING_STOCKS})
+
+
+def buy(p: Portfolio, stock: str, qty: int, prices: dict[str, float]) -> bool:
+    """Buy `qty` shares if affordable. Returns True on success, False otherwise."""
+    if qty <= 0:
+        return False
+    cost = qty * prices[stock]
+    if cost > p.cash:
+        return False
+    p.cash = round(p.cash - cost, 2)
+    p.holdings[stock] += qty
+    return True
+
+
+def sell(p: Portfolio, stock: str, qty: int, prices: dict[str, float]) -> bool:
+    """Sell `qty` shares if held. Returns True on success, False otherwise."""
+    if qty <= 0 or p.holdings.get(stock, 0) < qty:
+        return False
+    p.cash = round(p.cash + qty * prices[stock], 2)
+    p.holdings[stock] -= qty
+    return True
+
+
+def portfolio_value(p: Portfolio, prices: dict[str, float]) -> float:
+    """Cash plus the marked-to-market value of all holdings."""
+    held = sum(shares * prices.get(stock, 0.0) for stock, shares in p.holdings.items())
+    return round(p.cash + held, 2)
+
+
+def settle(p: Portfolio, prices: dict[str, float], starting_capital: float) -> float:
+    """Session payout: profit above starting capital, floored at $0 (never lose)."""
+    return round(max(0.0, portfolio_value(p, prices) - starting_capital), 2)
