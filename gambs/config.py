@@ -25,6 +25,10 @@ TRADING_CAPITAL: float = 1000.0  # virtual session chips, NOT real balance
 DATA_DIR: Path = Path(__file__).resolve().parent / "data"
 SAVE_PATH: Path = DATA_DIR / "save.json"
 
+# --- Bounty Jobs tunables ---
+BOUNTY_JOBS_PATH: Path = DATA_DIR / "bounty_jobs.json"
+BOUNTY_COOLDOWN_SECONDS: float = 120.0
+
 # --- Color palette (hex, consumed by rich styles) ---
 COLORS: dict[str, str] = {
     "bg": "#0a0a0f",

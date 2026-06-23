@@ -1,0 +1,122 @@
+{
+  "LOW": [
+    {
+      "id": "corner_store",
+      "title": "Corner Store Snatch",
+      "start": "n1",
+      "nodes": {
+        "n1": {
+          "text": "A sleepy corner store, register full. How do you get in?",
+          "choices": [
+            { "label": "Walk in casual", "next": "n2" },
+            { "label": "Force the back door", "next": "risk_door" }
+          ]
+        },
+        "risk_door": {
+          "text": "The back door is alarmed. Try to disable it?",
+          "risk": { "success_chance": 0.6, "on_success": "n2", "on_fail": "busted" }
+        },
+        "n2": {
+          "text": "You're at the register. Grab and go, or crack the safe too?",
+          "choices": [
+            { "label": "Grab the till", "next": "win_small" },
+            { "label": "Crack the safe", "next": "risk_safe" }
+          ]
+        },
+        "risk_safe": {
+          "text": "The safe is old but stubborn.",
+          "risk": { "success_chance": 0.5, "on_success": "win_big", "on_fail": "busted" }
+        },
+        "win_small": { "text": "Clean getaway with the till.", "terminal": { "payout": 150 } },
+        "win_big": { "text": "Till and safe — tidy haul.", "terminal": { "payout": 300 } },
+        "busted": { "text": "Sirens. You bolt empty-handed.", "terminal": { "fail": true } }
+      }
+    }
+  ],
+  "MEDIUM": [
+    {
+      "id": "armored_van",
+      "title": "Armored Van Tail",
+      "start": "n1",
+      "nodes": {
+        "n1": {
+          "text": "An armored van runs a fixed route. Where do you hit it?",
+          "choices": [
+            { "label": "Quiet underpass", "next": "risk_block" },
+            { "label": "Busy intersection", "next": "n2" }
+          ]
+        },
+        "risk_block": {
+          "text": "Block it in the underpass — risky but isolated.",
+          "risk": { "success_chance": 0.55, "on_success": "n3", "on_fail": "busted" }
+        },
+        "n2": {
+          "text": "Too many eyes. Abort or improvise a distraction?",
+          "choices": [
+            { "label": "Abort to the underpass", "next": "risk_block" },
+            { "label": "Pull the fire alarm nearby", "next": "n3" }
+          ]
+        },
+        "n3": {
+          "text": "Doors are open. Take one bag or all three?",
+          "choices": [
+            { "label": "One bag, leave clean", "next": "win_small" },
+            { "label": "All three, push your luck", "next": "risk_greed" }
+          ]
+        },
+        "risk_greed": {
+          "text": "Loading all three takes precious seconds.",
+          "risk": { "success_chance": 0.45, "on_success": "win_big", "on_fail": "busted" }
+        },
+        "win_small": { "text": "One bag, gone before backup.", "terminal": { "payout": 500 } },
+        "win_big": { "text": "All three bags — legendary run.", "terminal": { "payout": 800 } },
+        "busted": { "text": "Reinforcements box you in. Nothing.", "terminal": { "fail": true } }
+      }
+    }
+  ],
+  "HIGH": [
+    {
+      "id": "casino_vault",
+      "title": "Casino Vault Job",
+      "start": "n1",
+      "nodes": {
+        "n1": {
+          "text": "The GAMBS vault. How do you breach the floor?",
+          "choices": [
+            { "label": "Bribe a dealer for access", "next": "risk_bribe" },
+            { "label": "Pose as maintenance", "next": "n2" }
+          ]
+        },
+        "risk_bribe": {
+          "text": "The dealer might rat you out.",
+          "risk": { "success_chance": 0.5, "on_success": "n3", "on_fail": "busted" }
+        },
+        "n2": {
+          "text": "Maintenance badge works. Stairs or the freight elevator?",
+          "choices": [
+            { "label": "Stairs (slow, quiet)", "next": "n3" },
+            { "label": "Freight elevator (fast, watched)", "next": "risk_elevator" }
+          ]
+        },
+        "risk_elevator": {
+          "text": "Cameras sweep the elevator bay.",
+          "risk": { "success_chance": 0.55, "on_success": "n3", "on_fail": "busted" }
+        },
+        "n3": {
+          "text": "At the vault door. Drill it or use the stolen code?",
+          "choices": [
+            { "label": "Use the stolen code", "next": "risk_code" },
+            { "label": "Drill the hinges", "next": "win_small" }
+          ]
+        },
+        "risk_code": {
+          "text": "The code may already be rotated.",
+          "risk": { "success_chance": 0.5, "on_success": "win_big", "on_fail": "busted" }
+        },
+        "win_small": { "text": "Drilled in, grabbed a stack, slipped out.", "terminal": { "payout": 1000 } },
+        "win_big": { "text": "Full vault. You own the night.", "terminal": { "payout": 2000 } },
+        "busted": { "text": "Lockdown. Guards everywhere. You flee broke.", "terminal": { "fail": true } }
+      }
+    }
+  ]
+}
