@@ -45,3 +45,12 @@ def test_earn_menu_panel_lists_all_labels():
 def test_registry_includes_trading():
     ids = [g.id for g in all_earn_games()]
     assert "trading" in ids
+
+
+def test_registry_includes_bounty():
+    ids = [g.id for g in all_earn_games()]
+    assert "bounty" in ids
+
+
+def test_registry_has_three_earn_games():
+    assert len(all_earn_games()) == 3

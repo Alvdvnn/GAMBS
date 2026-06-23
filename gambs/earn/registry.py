@@ -28,8 +28,10 @@ def all_earn_games() -> list[EarnEntry]:
     """Return every registered earn game, in display order."""
     from gambs.earn.typing_heist_screen import run_typing_heist
     from gambs.earn.trading_screen import run_trading
+    from gambs.earn.bounty_screen import run_bounty
 
     return [
         EarnEntry("typing_heist", "⌨  Typing Heist", run_typing_heist),
         EarnEntry("trading", "📈  Terminal Trading", run_trading),
+        EarnEntry("bounty", "🎯  Bounty Jobs", run_bounty),
     ]
