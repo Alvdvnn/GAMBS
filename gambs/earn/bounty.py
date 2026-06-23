@@ -71,3 +71,27 @@ def terminal_result(node: dict) -> tuple[bool, float]:
     if terminal.get("fail"):
         return (False, 0.0)
     return (True, float(terminal["payout"]))
+
+
+def is_on_cooldown(save: SaveData, now: float) -> bool:
+    """True if the player is still inside the post-failure cooldown window."""
+    return now < save.bounty_cooldown_until
+
+
+def cooldown_remaining(save: SaveData, now: float) -> float:
+    """Seconds left on the cooldown, floored at 0."""
+    return max(0.0, save.bounty_cooldown_until - now)
+
+
+def apply_success(save: SaveData, payout: float) -> None:
+    """Credit a winning job: balance + total_earned up, both counters up."""
+    save.balance = round(save.balance + payout, 2)
+    save.stats.total_earned = round(save.stats.total_earned + payout, 2)
+    save.stats.bounty_jobs_completed += 1
+    save.stats.bounty_jobs_attempted += 1
+
+
+def apply_failure(save: SaveData, now: float) -> None:
+    """Record a failed job: no money lost, attempt counted, cooldown started."""
+    save.stats.bounty_jobs_attempted += 1
+    save.bounty_cooldown_until = now + config.BOUNTY_COOLDOWN_SECONDS

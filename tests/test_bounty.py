@@ -83,3 +83,46 @@ def test_resolve_risk_failure_with_high_roll():
 def test_terminal_result_success_and_failure():
     assert terminal_result(get_node(SAMPLE_JOB, "win")) == (True, 200.0)
     assert terminal_result(get_node(SAMPLE_JOB, "lose")) == (False, 0.0)
+
+
+from gambs.earn.bounty import (
+    is_on_cooldown,
+    cooldown_remaining,
+    apply_success,
+    apply_failure,
+)
+from gambs.save import SaveData
+
+
+def test_not_on_cooldown_by_default():
+    save = SaveData()
+    assert is_on_cooldown(save, now=1000.0) is False
+
+
+def test_on_cooldown_when_now_before_until():
+    save = SaveData(bounty_cooldown_until=2000.0)
+    assert is_on_cooldown(save, now=1500.0) is True
+    assert cooldown_remaining(save, now=1500.0) == 500.0
+
+
+def test_cooldown_remaining_never_negative():
+    save = SaveData(bounty_cooldown_until=1000.0)
+    assert cooldown_remaining(save, now=3000.0) == 0.0
+
+
+def test_apply_success_credits_and_counts():
+    save = SaveData(balance=500.0)
+    apply_success(save, 300.0)
+    assert save.balance == 800.0
+    assert save.stats.total_earned == 300.0
+    assert save.stats.bounty_jobs_completed == 1
+    assert save.stats.bounty_jobs_attempted == 1
+
+
+def test_apply_failure_sets_cooldown_and_counts_attempt_only():
+    save = SaveData(balance=500.0)
+    apply_failure(save, now=1000.0)
+    assert save.balance == 500.0  # no money lost
+    assert save.stats.bounty_jobs_completed == 0
+    assert save.stats.bounty_jobs_attempted == 1
+    assert save.bounty_cooldown_until == 1000.0 + config.BOUNTY_COOLDOWN_SECONDS
