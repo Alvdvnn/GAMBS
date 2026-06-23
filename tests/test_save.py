@@ -62,3 +62,26 @@ def test_load_missing_file_returns_default(tmp_path):
     loaded = load_save(path)
     assert loaded.balance == 1000.0
     assert path.exists()  # default is persisted on first load
+
+
+def test_stats_has_bounty_jobs_attempted_default():
+    from gambs.save import Stats
+    assert Stats().bounty_jobs_attempted == 0
+
+
+def test_savedata_has_bounty_cooldown_until_default():
+    assert SaveData().bounty_cooldown_until == 0.0
+
+
+def test_from_dict_defaults_new_fields_for_old_saves():
+    save = from_dict({"balance": 500.0, "stats": {"total_won": 10.0}})
+    assert save.stats.bounty_jobs_attempted == 0
+    assert save.bounty_cooldown_until == 0.0
+
+
+def test_roundtrip_preserves_new_fields():
+    save = SaveData(bounty_cooldown_until=123.0)
+    save.stats.bounty_jobs_attempted = 4
+    restored = from_dict(to_dict(save))
+    assert restored.bounty_cooldown_until == 123.0
+    assert restored.stats.bounty_jobs_attempted == 4

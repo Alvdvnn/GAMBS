@@ -26,6 +26,7 @@ class Stats:
     best_crash_multiplier: float = 0.0
     bounty_jobs_completed: int = 0
     total_earned: float = 0.0
+    bounty_jobs_attempted: int = 0
 
 
 @dataclass
@@ -40,6 +41,7 @@ class SaveData:
     stats: Stats = field(default_factory=Stats)
     created_at: str = ""
     last_played: str = ""
+    bounty_cooldown_until: float = 0.0
 
 
 def default_save() -> SaveData:
