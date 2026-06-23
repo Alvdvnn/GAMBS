@@ -40,3 +40,8 @@ def test_earn_menu_panel_lists_all_labels():
     out = cap.get()
     for entry in games:
         assert entry.label in out
+
+
+def test_registry_includes_trading():
+    ids = [g.id for g in all_earn_games()]
+    assert "trading" in ids
