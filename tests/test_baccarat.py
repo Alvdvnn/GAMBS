@@ -1,8 +1,15 @@
 from gambs.games.cards import Card
 from gambs.games.baccarat import (
-    card_value, hand_total, play_round, settle,
+    card_value, hand_total, play_round, settle, settle_all,
     BET_PLAYER, BET_BANKER, BET_TIE,
 )
+
+
+def test_settle_all_returns_per_bet_nets():
+    player = [Card("9", "♠"), Card("7", "♥")]  # total 6
+    banker = [Card("5", "♠"), Card("9", "♥")]  # total 4 -> player wins
+    nets = settle_all([(BET_PLAYER, 10.0), (BET_TIE, 5.0)], player, banker)
+    assert nets == [10.0, -5.0]
 
 
 def test_card_value_face_and_ten_are_zero():

@@ -54,3 +54,10 @@ def settle(bet_type: str, bet_value: int | None, result: int, amount: float) -> 
     else:
         raise ValueError(f"unknown bet type: {bet_type}")
     return round(amount if won else -amount, 2)
+
+
+def settle_all(
+    bets: list[tuple[str, int | None, float]], result: int
+) -> list[float]:
+    """Settle several bets against one spin; returns the net for each bet."""
+    return [settle(bet_type, value, result, amount) for bet_type, value, amount in bets]

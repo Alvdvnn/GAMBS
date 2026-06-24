@@ -1,7 +1,7 @@
 import random
 
 from gambs.games.roulette import (
-    spin, color, settle,
+    spin, color, settle, settle_all,
     BET_STRAIGHT, BET_RED, BET_BLACK, BET_ODD, BET_EVEN, BET_LOW, BET_HIGH,
 )
 
@@ -52,3 +52,15 @@ def test_low_and_high():
     assert settle(BET_LOW, None, 10, 10.0) == 10.0
     assert settle(BET_HIGH, None, 10, 10.0) == -10.0
     assert settle(BET_HIGH, None, 25, 10.0) == 10.0
+
+
+def test_settle_all_returns_per_bet_nets():
+    # Spin lands on 10 (black, even, low). Bets: red (lose), even (win),
+    # straight 10 (win 35:1).
+    bets = [
+        (BET_RED, None, 10.0),
+        (BET_EVEN, None, 10.0),
+        (BET_STRAIGHT, 10, 5.0),
+    ]
+    nets = settle_all(bets, 10)
+    assert nets == [-10.0, 10.0, 175.0]

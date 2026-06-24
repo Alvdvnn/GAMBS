@@ -84,3 +84,10 @@ def settle(bet_type: str, player: list[Card], banker: list[Card], bet: float) ->
     if winner == BET_BANKER:
         return round(bet * 0.95, 2)
     return round(bet, 2)
+
+
+def settle_all(
+    bets: list[tuple[str, float]], player: list[Card], banker: list[Card]
+) -> list[float]:
+    """Settle several bets against one dealt round; returns the net for each."""
+    return [settle(bet_type, player, banker, amount) for bet_type, amount in bets]
