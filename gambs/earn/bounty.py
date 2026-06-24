@@ -18,6 +18,7 @@ from pathlib import Path
 
 from gambs import config
 from gambs.save import SaveData
+from gambs.vip import activity_xp, add_xp
 
 
 def load_jobs(path: Path) -> dict[str, list[dict]]:
@@ -89,6 +90,7 @@ def apply_success(save: SaveData, payout: float) -> None:
     save.stats.total_earned = round(save.stats.total_earned + payout, 2)
     save.stats.bounty_jobs_completed += 1
     save.stats.bounty_jobs_attempted += 1
+    add_xp(save, activity_xp(payout))
 
 
 def apply_failure(save: SaveData, now: float) -> None:

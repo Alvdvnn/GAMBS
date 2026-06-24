@@ -8,7 +8,6 @@ import time
 import readchar
 from rich.align import Align
 from rich.console import Console
-from rich.panel import Panel
 from rich.text import Text
 
 from gambs import config
@@ -20,6 +19,7 @@ from gambs.ui.game_select import run_game_select
 from gambs.ui.menu import menu_panel, resolve_route
 from gambs.ui.shop_screen import run_shop
 from gambs.ui.stats_screen import run_stats
+from gambs.ui.vip_screen import run_vip
 
 
 def _play_splash(console: Console) -> None:
@@ -32,13 +32,6 @@ def _play_splash(console: Console) -> None:
         console.print(Align.center(Text("[ Terminal Game Station ]", style=config.COLORS["gold"])))
         time.sleep(0.35)
     console.print(Align.center(Text("Press any key to start...", style="dim")))
-    readchar.readkey()
-
-
-def _coming_soon(console: Console, name: str) -> None:
-    console.clear()
-    console.print(Panel(Align.center(Text(f"{name} — coming soon", style=config.COLORS['info'])), style=config.COLORS["gold"]))
-    console.print(Text("Press any key...", style="dim"))
     readchar.readkey()
 
 
@@ -83,7 +76,8 @@ def main() -> None:
         elif route == "stats":
             run_stats(console, save, session_start)
         elif route == "vip":
-            _coming_soon(console, route.upper())
+            run_vip(console, save)
+            write_save(config.SAVE_PATH, save)
         # unknown key: loop again (no disk write)
 
 

@@ -6,9 +6,12 @@ from pathlib import Path
 STARTING_BALANCE: float = 1000.0
 HOUSE_EDGE: float = 0.03
 
-# --- VIP (used in later plans, defined here for the save model) ---
+# --- VIP / prestige ---
 VIP_XP_PER_LEVEL: int = 500
 MAX_VIP_LEVEL: int = 10
+XP_PER_DOLLAR: float = 0.1        # XP granted per $1 of wager / earnings
+PRESTIGE_LUCK_STEP: float = 0.02  # luck buff gained per prestige
+MAX_LUCK_BUFF: float = 0.10       # cap on stacked prestige luck buff
 
 # --- Crash game tunables ---
 CRASH_GROWTH_RATE: float = 0.15  # k in multiplier = e^(k * elapsed_seconds)

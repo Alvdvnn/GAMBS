@@ -16,6 +16,7 @@ from gambs.games import crash
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import bet_prompt, tutorial_gate, pause
+from gambs.vip import activity_xp, add_xp
 
 
 def _read_key_nonblocking() -> str | None:
@@ -79,6 +80,7 @@ def play_crash(console: Console, save: SaveData, bet: float) -> crash.CrashResul
         save.stats.best_crash_multiplier = max(
             save.stats.best_crash_multiplier, result.cashout_multiplier or 0.0
         )
+    add_xp(save, activity_xp(bet))
 
     if result.won:
         msg = Text(

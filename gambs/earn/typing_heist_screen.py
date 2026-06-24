@@ -14,6 +14,7 @@ from gambs.earn import typing_heist
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import tutorial_gate, result_banner, pause
+from gambs.vip import activity_xp, add_xp
 
 TYPING_HEIST_TUTORIAL = [
     "Codes flash on screen — type each one and press Enter.",
@@ -59,6 +60,8 @@ def run_typing_heist(console: Console, save: SaveData) -> None:
     reward = typing_heist.session_reward(tier, accuracies, elapsed)
     save.balance = round(save.balance + reward, 2)
     save.stats.total_earned = round(save.stats.total_earned + reward, 2)
+    if reward > 0:
+        add_xp(save, activity_xp(reward))
 
     avg = sum(accuracies) / len(accuracies) if accuracies else 0.0
     console.print(

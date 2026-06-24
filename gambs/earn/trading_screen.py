@@ -20,6 +20,7 @@ from gambs.earn import trading
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import tutorial_gate, result_banner, pause
+from gambs.vip import activity_xp, add_xp
 
 TRADING_TUTORIAL = [
     "Four stocks — LUCK, CHIP, DICE, RISK — drift every tick.",
@@ -121,6 +122,8 @@ def run_trading(console: Console, save: SaveData) -> None:
     reward = trading.settle(portfolio, prices, config.TRADING_CAPITAL)
     save.balance = round(save.balance + reward, 2)
     save.stats.total_earned = round(save.stats.total_earned + reward, 2)
+    if reward > 0:
+        add_xp(save, activity_xp(reward))
 
     console.print(
         Text(
