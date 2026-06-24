@@ -13,6 +13,7 @@ from gambs import config
 from gambs.save import SaveData, write_save
 from gambs.shop import Item, load_items, can_afford, owned_charges, purchase
 from gambs.ui.components import balance_bar_text
+from gambs.ui.cosmetics_screen import run_cosmetics
 
 
 def shop_table(save: SaveData, items: list[Item]) -> Table:
@@ -59,11 +60,15 @@ def run_shop(console: Console, save: SaveData) -> None:
         if message:
             console.print(message)
         console.print(
-            f"[1-{len(items)}] buy   [ESC] back", style="dim"
+            f"[1-{len(items)}] buy   [C] cosmetics   [ESC] back", style="dim"
         )
         key = readchar.readkey()
         if key in ("\x1b", "q", "Q"):
             return
+        if key in ("c", "C"):
+            run_cosmetics(console, save)
+            message = ""
+            continue
         if not key.isdigit():
             message = ""
             continue

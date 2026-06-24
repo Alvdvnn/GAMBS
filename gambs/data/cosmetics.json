@@ -1,0 +1,49 @@
+[
+  {
+    "id": "default",
+    "name": "Classic Gold",
+    "price": 0,
+    "unlock_level": 1,
+    "palette": {}
+  },
+  {
+    "id": "neon",
+    "name": "Neon Arcade",
+    "price": 1500,
+    "unlock_level": 1,
+    "palette": {
+      "gold": "#39ff14",
+      "info": "#ff00ff",
+      "gamble": "#00e5ff",
+      "earn": "#ffe600"
+    }
+  },
+  {
+    "id": "mono",
+    "name": "Monochrome",
+    "price": 1200,
+    "unlock_level": 1,
+    "palette": {
+      "gold": "#e0e0e0",
+      "info": "#bdbdbd",
+      "gamble": "#9e9e9e",
+      "earn": "#757575",
+      "success": "#ffffff",
+      "danger": "#616161"
+    }
+  },
+  {
+    "id": "vapor",
+    "name": "Vaporwave",
+    "price": 2000,
+    "unlock_level": 7,
+    "palette": {
+      "gold": "#ff71ce",
+      "info": "#01cdfe",
+      "gamble": "#b967ff",
+      "earn": "#05ffa1",
+      "success": "#05ffa1",
+      "danger": "#ff6ec7"
+    }
+  }
+]

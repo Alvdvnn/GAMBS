@@ -11,6 +11,7 @@ from rich.console import Console
 from rich.text import Text
 
 from gambs import config
+from gambs.cosmetics import apply_active_theme, load_themes
 from gambs.ui.earn_select import run_earn_select
 from gambs.save import SaveData, load_save, write_save
 from gambs.ui import splash
@@ -50,6 +51,7 @@ def _make_console() -> Console:
 def main() -> None:
     console = _make_console()
     save = load_save(config.SAVE_PATH)
+    apply_active_theme(save, load_themes(config.COSMETICS_PATH))
     session_start = time.monotonic()
     _play_splash(console)
 
