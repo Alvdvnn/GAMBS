@@ -19,6 +19,7 @@ from gambs import config
 from gambs.difficulty import HIGH_BOUNTY_MIN_VIP, bounty_tier_unlocked
 from gambs.earn import bounty
 from gambs.save import SaveData
+from gambs.shop import consume_charge, has_charges, owned_charges
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import tutorial_gate, result_banner, pause
 
@@ -90,20 +91,36 @@ def _play_job(console: Console, job: dict, rng: random.Random) -> tuple[bool, fl
 def run_bounty(console: Console, save: SaveData) -> None:
     tutorial_gate(console, save, "bounty", "BOUNTY JOBS", BOUNTY_TUTORIAL)
     jobs = bounty.load_jobs(config.BOUNTY_JOBS_PATH)
+    vault_active = False  # a primed Vault Key ignores locks/cooldown for one job
 
     while True:
         now = time.time()
         console.clear()
         console.print(balance_bar_text(save))
         console.print(_board_panel(jobs, save, now))
+        if vault_active:
+            console.print(
+                Text("  🔑 Vault Key primed for your next job.", style=config.COLORS["gold"])
+            )
+        elif has_charges(save, "vault_key"):
+            console.print(
+                Text(
+                    f"  [K] Use Vault Key ({owned_charges(save, 'vault_key')}) — "
+                    "unlock HIGH + skip cooldown once",
+                    style="dim",
+                )
+            )
         console.print("Pick a tier: ", end="")
         key = readchar.readkey()
         if key in ("\x1b", "q", "Q"):
             return
+        if key in ("k", "K") and not vault_active and has_charges(save, "vault_key"):
+            vault_active = True
+            continue
         if not (key.isdigit() and 1 <= int(key) <= len(_TIERS)):
             continue
 
-        if bounty.is_on_cooldown(save, now):
+        if bounty.is_on_cooldown(save, now) and not vault_active:
             console.print(
                 Text(
                     f"  Still on cooldown ({bounty.cooldown_remaining(save, now):.0f}s).",
@@ -114,7 +131,7 @@ def run_bounty(console: Console, save: SaveData) -> None:
             continue
 
         tier = _TIERS[int(key) - 1]
-        if not bounty_tier_unlocked(tier, save.vip.level):
+        if not bounty_tier_unlocked(tier, save.vip.level) and not vault_active:
             console.print(
                 Text(
                     f"  {tier} jobs unlock at VIP {HIGH_BOUNTY_MIN_VIP}.",
@@ -126,6 +143,9 @@ def run_bounty(console: Console, save: SaveData) -> None:
         entries = bounty.tier_jobs(jobs, tier)
         if not entries:
             continue
+        if vault_active:
+            consume_charge(save, "vault_key")
+            vault_active = False
         job = random.choice(entries)
         rng = random.Random()
 

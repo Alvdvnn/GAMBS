@@ -18,6 +18,7 @@ from rich.text import Text
 from gambs import config
 from gambs.difficulty import vip_volatility_bonus
 from gambs.earn import trading
+from gambs.shop import consume_charge, has_charges
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import tutorial_gate, result_banner, pause
@@ -68,9 +69,40 @@ def _portfolio_text(p: trading.Portfolio, prices: dict[str, float]) -> Text:
     return lines
 
 
-def _prompt_trade(console: Console, p: trading.Portfolio, prices: dict[str, float]) -> None:
-    """One action: B/S to buy/sell, anything else to hold."""
-    raw = input("  [B]uy / [S]ell / Enter to hold: ").strip().lower()
+def _reveal_intel(
+    console: Console, prices: dict[str, float], next_prices: dict[str, float]
+) -> None:
+    """Print next-tick direction arrows for every stock (Market Intel effect)."""
+    parts = []
+    for stock in config.TRADING_STOCKS:
+        nxt, cur = next_prices[stock], prices[stock]
+        arrow = "▲" if nxt > cur else "▼" if nxt < cur else "="
+        parts.append(f"{stock} {arrow}")
+    console.print(
+        Text("  📡 Intel — next tick: " + "   ".join(parts), style=config.COLORS["info"])
+    )
+
+
+def _prompt_trade(
+    console: Console,
+    p: trading.Portfolio,
+    prices: dict[str, float],
+    save: SaveData,
+    next_prices: dict[str, float],
+) -> None:
+    """One action: B/S to buy/sell, I to spend Market Intel, else hold."""
+    while True:
+        raw = input("  [B]uy / [S]ell / [I]ntel / Enter to hold: ").strip().lower()
+        if raw == "i":
+            if has_charges(save, "market_intel"):
+                consume_charge(save, "market_intel")
+                _reveal_intel(console, prices, next_prices)
+            else:
+                console.print(
+                    Text("  No Market Intel charges.", style=config.COLORS["danger"])
+                )
+            continue
+        break
     if raw not in ("b", "s"):
         return
     stock = input(f"  Stock {config.TRADING_STOCKS}: ").strip().upper()
@@ -117,7 +149,12 @@ def run_trading(console: Console, save: SaveData) -> None:
         )
         console.print(_market_table(prices, prev))
         console.print(_portfolio_text(portfolio, prices))
-        _prompt_trade(console, portfolio, prices)
+        # Peek the next tick deterministically so Market Intel can reveal it
+        # without altering the prices the player actually trades into.
+        rng_state = rng.getstate()
+        next_prices = trading.step_prices(rng, prices, volatility)
+        rng.setstate(rng_state)
+        _prompt_trade(console, portfolio, prices, save, next_prices)
         prev = dict(prices)
         prices = trading.step_prices(rng, prices, volatility)
         time.sleep(0.15)  # fake live-market tick feel
