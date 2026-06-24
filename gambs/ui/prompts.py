@@ -13,6 +13,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from gambs import config
+from gambs.difficulty import min_bet_for
 from gambs.save import SaveData
 from gambs.ui.tutorial import (
     should_show_tutorial,
@@ -22,9 +23,16 @@ from gambs.ui.tutorial import (
 
 
 def bet_prompt(console: Console, save: SaveData) -> float | None:
-    """Ask for a bet; return a valid amount within balance, or None to cancel."""
+    """Ask for a bet; return a valid amount within balance, or None to cancel.
+
+    The minimum bet rises with VIP level (a balancing challenge), so high-rank
+    players can no longer place trivial bets.
+    """
+    min_bet = min_bet_for(save.vip.level)
     console.print(
-        f"Balance: ${save.balance:,.2f}. Enter bet (blank to cancel): ", end=""
+        f"Balance: ${save.balance:,.2f}. Min bet ${min_bet:,.0f}. "
+        "Enter bet (blank to cancel): ",
+        end="",
     )
     raw = input().strip()
     if not raw:
@@ -34,10 +42,10 @@ def bet_prompt(console: Console, save: SaveData) -> float | None:
     except ValueError:
         console.print(Text("Invalid amount.", style=config.COLORS["danger"]))
         return None
-    if bet <= 0 or bet > save.balance:
+    if bet < min_bet or bet > save.balance:
         console.print(
             Text(
-                "Bet must be positive and within your balance.",
+                f"Bet must be at least ${min_bet:,.0f} and within your balance.",
                 style=config.COLORS["danger"],
             )
         )

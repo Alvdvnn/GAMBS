@@ -16,6 +16,7 @@ from rich.table import Table
 from rich.text import Text
 
 from gambs import config
+from gambs.difficulty import vip_volatility_bonus
 from gambs.earn import trading
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
@@ -92,7 +93,9 @@ def _prompt_trade(console: Console, p: trading.Portfolio, prices: dict[str, floa
 def run_trading(console: Console, save: SaveData) -> None:
     tutorial_gate(console, save, "trading", "TERMINAL TRADING", TRADING_TUTORIAL)
     rng = random.Random()
-    volatility = trading.volatility_for_balance(save.balance)
+    volatility = trading.volatility_for_balance(save.balance) + vip_volatility_bonus(
+        save.vip.level
+    )
     prices = trading.initial_prices()
     prev = dict(prices)
     portfolio = trading.new_portfolio(config.TRADING_CAPITAL)

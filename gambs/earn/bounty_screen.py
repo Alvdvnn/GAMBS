@@ -16,6 +16,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from gambs import config
+from gambs.difficulty import HIGH_BOUNTY_MIN_VIP, bounty_tier_unlocked
 from gambs.earn import bounty
 from gambs.save import SaveData
 from gambs.ui.components import balance_bar_text
@@ -36,8 +37,16 @@ def _board_panel(jobs: dict, save: SaveData, now: float) -> Panel:
     for i, tier in enumerate(_TIERS, start=1):
         entries = bounty.tier_jobs(jobs, tier)
         title = entries[0]["title"] if entries else "(none)"
+        unlocked = bounty_tier_unlocked(tier, save.vip.level)
         body.append(f" [{i}] ", style=f"bold {config.COLORS['gold']}")
-        body.append(f"{tier:<7} — {title}\n", style=f"bold {config.COLORS['earn']}")
+        if unlocked:
+            body.append(
+                f"{tier:<7} — {title}\n", style=f"bold {config.COLORS['earn']}"
+            )
+        else:
+            body.append(
+                f"{tier:<7} — locked (VIP {HIGH_BOUNTY_MIN_VIP})\n", style="dim"
+            )
     if bounty.is_on_cooldown(save, now):
         body.append(
             f"\n On cooldown: {bounty.cooldown_remaining(save, now):.0f}s left",
@@ -105,6 +114,15 @@ def run_bounty(console: Console, save: SaveData) -> None:
             continue
 
         tier = _TIERS[int(key) - 1]
+        if not bounty_tier_unlocked(tier, save.vip.level):
+            console.print(
+                Text(
+                    f"  {tier} jobs unlock at VIP {HIGH_BOUNTY_MIN_VIP}.",
+                    style=config.COLORS["danger"],
+                )
+            )
+            pause(console)
+            continue
         entries = bounty.tier_jobs(jobs, tier)
         if not entries:
             continue

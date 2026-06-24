@@ -39,3 +39,19 @@ def test_bet_prompt_rejects_garbage(monkeypatch):
     save = default_save()
     monkeypatch.setattr("builtins.input", lambda: "abc")
     assert bet_prompt(_console(), save) is None
+
+
+def test_bet_prompt_rejects_below_vip_min_bet(monkeypatch):
+    save = default_save()
+    save.balance = 5000.0
+    save.vip.level = 5  # min bet $25
+    monkeypatch.setattr("builtins.input", lambda: "10")
+    assert bet_prompt(_console(), save) is None
+
+
+def test_bet_prompt_accepts_at_vip_min_bet(monkeypatch):
+    save = default_save()
+    save.balance = 5000.0
+    save.vip.level = 5
+    monkeypatch.setattr("builtins.input", lambda: "25")
+    assert bet_prompt(_console(), save) == 25.0
