@@ -53,6 +53,25 @@ def owned_charges(save: SaveData, item_id: str) -> int:
     return int(entry["charges"]) if entry else 0
 
 
+def has_charges(save: SaveData, item_id: str) -> bool:
+    """True if the player holds at least one charge of this item."""
+    return owned_charges(save, item_id) > 0
+
+
+def consume_charge(save: SaveData, item_id: str) -> bool:
+    """Spend one charge of an owned item. Returns False if none are held.
+
+    The inventory entry is removed once its last charge is used.
+    """
+    entry = _inventory_entry(save, item_id)
+    if entry is None or int(entry["charges"]) <= 0:
+        return False
+    entry["charges"] = int(entry["charges"]) - 1
+    if entry["charges"] <= 0:
+        save.inventory.remove(entry)
+    return True
+
+
 def can_afford(save: SaveData, item: Item) -> bool:
     """True if the balance covers the item's price (inclusive)."""
     return save.balance >= item.price

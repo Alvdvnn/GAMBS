@@ -38,6 +38,10 @@ ITEMS_PATH: Path = DATA_DIR / "items.json"
 # --- Cosmetics ---
 COSMETICS_PATH: Path = DATA_DIR / "cosmetics.json"
 
+# --- Item effects ---
+LUCKY_CHARM_BUFF: float = 0.10      # chance to rescue a loss on Coin Flip / Dice
+INSURANCE_REFUND_RATE: float = 0.5  # fraction of bet refunded when Crash busts
+
 # --- Color palette (hex, consumed by rich styles) ---
 COLORS: dict[str, str] = {
     "bg": "#0a0a0f",

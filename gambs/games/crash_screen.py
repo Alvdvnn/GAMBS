@@ -13,7 +13,9 @@ from rich.text import Text
 
 from gambs import config
 from gambs.games import crash
+from gambs.items_effects import insurance_refund
 from gambs.save import SaveData
+from gambs.shop import consume_charge, has_charges
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import bet_prompt, tutorial_gate, pause
 from gambs.vip import activity_xp, add_xp
@@ -82,10 +84,22 @@ def play_crash(console: Console, save: SaveData, bet: float) -> crash.CrashResul
         )
     add_xp(save, activity_xp(bet))
 
+    refund = 0.0
+    if not result.won and has_charges(save, "insurance_card"):
+        consume_charge(save, "insurance_card")
+        refund = insurance_refund(bet)
+        save.balance = round(save.balance + refund, 2)
+
     if result.won:
         msg = Text(
             f"CASHED OUT at {result.cashout_multiplier:.2f}x  +${result.winnings:,.2f}",
             style=f"bold {config.COLORS['success']}",
+        )
+    elif refund > 0:
+        msg = Text(
+            f"💥 CRASHED at {crash_point:.2f}x  -${bet:,.2f}  "
+            f"🛡 Insurance +${refund:,.2f}",
+            style=f"bold {config.COLORS['danger']}",
         )
     else:
         msg = Text(

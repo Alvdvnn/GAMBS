@@ -12,7 +12,9 @@ from rich.text import Text
 from gambs import config
 from gambs.games import dice
 from gambs.games.outcome import apply_net
+from gambs.items_effects import lucky_rescue
 from gambs.save import SaveData
+from gambs.shop import consume_charge, has_charges
 from gambs.ui.components import balance_bar_text
 from gambs.ui.prompts import bet_prompt, tutorial_gate, result_banner, pause
 
@@ -42,10 +44,17 @@ def run_dice(console: Console, save: SaveData) -> None:
         time.sleep(0.06)
     result = dice.roll(rng)
     net = dice.settle(bet_type, result, bet)
+    rescued = False
+    if has_charges(save, "lucky_charm"):
+        consume_charge(save, "lucky_charm")
+        new_net = lucky_rescue(net, bet, rng, config.LUCKY_CHARM_BUFF)
+        rescued = new_net > net
+        net = new_net
     apply_net(save, bet, net)
     total = result[0] + result[1]
+    charm = "  🍀 Lucky Charm!" if rescued else ""
     if net > 0:
-        result_banner(console, True, f"Rolled {result[0]}+{result[1]}={total}  WIN +${net:,.2f}")
+        result_banner(console, True, f"Rolled {result[0]}+{result[1]}={total}  WIN +${net:,.2f}{charm}")
     elif net == 0:
         result_banner(console, False, f"Rolled {total} — PUSH, bet returned")
     else:

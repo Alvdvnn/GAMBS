@@ -5,6 +5,8 @@ from gambs.shop import (
     load_items,
     find_item,
     owned_charges,
+    has_charges,
+    consume_charge,
     can_afford,
     purchase,
 )
@@ -73,3 +75,25 @@ def test_purchase_rejects_when_insufficient_funds():
     assert purchase(save, item) is False
     assert save.balance == 100.0
     assert owned_charges(save, "vault_key") == 0
+
+
+def test_has_charges_reflects_inventory():
+    save = SaveData()
+    assert has_charges(save, "lucky_charm") is False
+    save.inventory.append({"item_id": "lucky_charm", "charges": 1})
+    assert has_charges(save, "lucky_charm") is True
+
+
+def test_consume_charge_decrements_then_removes_entry():
+    save = SaveData()
+    save.inventory.append({"item_id": "lucky_charm", "charges": 2})
+    assert consume_charge(save, "lucky_charm") is True
+    assert owned_charges(save, "lucky_charm") == 1
+    assert consume_charge(save, "lucky_charm") is True
+    assert owned_charges(save, "lucky_charm") == 0
+    assert save.inventory == []  # entry removed at zero
+
+
+def test_consume_charge_false_when_none_held():
+    save = SaveData()
+    assert consume_charge(save, "lucky_charm") is False

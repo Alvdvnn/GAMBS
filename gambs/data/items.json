@@ -2,7 +2,7 @@
   {
     "id": "lucky_charm",
     "name": "Lucky Charm",
-    "effect": "+10% win chance on Coin Flip / Dice for next N rounds",
+    "effect": "10% chance to rescue a loss on Coin Flip / Dice (per round)",
     "charges": 3,
     "price": 400
   },
