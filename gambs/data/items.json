@@ -1,0 +1,30 @@
+[
+  {
+    "id": "lucky_charm",
+    "name": "Lucky Charm",
+    "effect": "+10% win chance on Coin Flip / Dice for next N rounds",
+    "charges": 3,
+    "price": 400
+  },
+  {
+    "id": "insurance_card",
+    "name": "Insurance Card",
+    "effect": "If Crash busts, refund 50% of your bet",
+    "charges": 1,
+    "price": 600
+  },
+  {
+    "id": "vault_key",
+    "name": "Vault Key",
+    "effect": "Unlock a HIGH-tier Bounty Job, skip cooldown once",
+    "charges": 1,
+    "price": 800
+  },
+  {
+    "id": "market_intel",
+    "name": "Market Intel",
+    "effect": "Reveal next price tick trend in Terminal Trading",
+    "charges": 2,
+    "price": 500
+  }
+]

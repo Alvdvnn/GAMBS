@@ -18,6 +18,7 @@ from gambs.ui import splash
 from gambs.ui.components import balance_bar_text
 from gambs.ui.game_select import run_game_select
 from gambs.ui.menu import menu_panel, resolve_route
+from gambs.ui.shop_screen import run_shop
 from gambs.ui.stats_screen import run_stats
 
 
@@ -77,9 +78,11 @@ def main() -> None:
         elif route == "earn":
             run_earn_select(console, save)
             write_save(config.SAVE_PATH, save)
+        elif route == "shop":
+            run_shop(console, save)
         elif route == "stats":
             run_stats(console, save, session_start)
-        elif route in ("shop", "vip"):
+        elif route == "vip":
             _coming_soon(console, route.upper())
         # unknown key: loop again (no disk write)
 

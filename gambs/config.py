@@ -29,6 +29,9 @@ SAVE_PATH: Path = DATA_DIR / "save.json"
 BOUNTY_JOBS_PATH: Path = DATA_DIR / "bounty_jobs.json"
 BOUNTY_COOLDOWN_SECONDS: float = 120.0
 
+# --- Item Shop ---
+ITEMS_PATH: Path = DATA_DIR / "items.json"
+
 # --- Color palette (hex, consumed by rich styles) ---
 COLORS: dict[str, str] = {
     "bg": "#0a0a0f",
