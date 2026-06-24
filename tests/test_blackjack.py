@@ -1,7 +1,45 @@
 from gambs.games.cards import Card
 from gambs.games.blackjack import (
     hand_value, is_blackjack, dealer_play, settle, BlackjackResult,
+    can_split, dealer_upcard_is_ace, insurance_result,
 )
+
+
+def test_can_split_same_rank():
+    assert can_split([Card("8", "♠"), Card("8", "♥")]) is True
+
+
+def test_can_split_two_ten_value_cards():
+    assert can_split([Card("K", "♠"), Card("10", "♥")]) is True
+
+
+def test_cannot_split_different_values():
+    assert can_split([Card("8", "♠"), Card("9", "♥")]) is False
+
+
+def test_cannot_split_more_than_two_cards():
+    assert can_split([Card("8", "♠"), Card("8", "♥"), Card("2", "♣")]) is False
+
+
+def test_dealer_upcard_is_ace():
+    assert dealer_upcard_is_ace([Card("A", "♠"), Card("9", "♥")]) is True
+    assert dealer_upcard_is_ace([Card("9", "♠"), Card("A", "♥")]) is False
+
+
+def test_insurance_pays_two_to_one_on_dealer_blackjack():
+    assert insurance_result([Card("A", "♠"), Card("K", "♥")], 50.0) == 100.0
+
+
+def test_insurance_loses_without_dealer_blackjack():
+    assert insurance_result([Card("A", "♠"), Card("9", "♥")], 50.0) == -50.0
+
+
+def test_split_hand_21_is_not_a_natural_blackjack():
+    player = [Card("A", "♠"), Card("K", "♥")]  # 21 but from a split
+    dealer = [Card("9", "♠"), Card("7", "♥")]  # 16, will be beaten
+    result = settle(player, dealer, 100.0, natural=False)
+    assert result.outcome == "win"
+    assert result.net == 100.0  # 1:1, not 3:2
 
 
 def test_hand_value_no_ace():
